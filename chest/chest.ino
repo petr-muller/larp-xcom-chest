@@ -5,8 +5,8 @@ bool playedAlready = false;
 
 int buzzPin = 9;
 int length = 15;
-char notes[] = "ccggaagffeeddc ";
-int beats[] = {1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 4};
+char notes[] = "cfcfcfcfcfcfcf ";
+int beats[] = {1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 4};
 int tempo = 300;
 
 int bendPin = 5;
@@ -18,13 +18,13 @@ void playTone(int tone, int duration) {
     digitalWrite(buzzPin, HIGH);
     delayMicroseconds(tone);
     digitalWrite(buzzPin, LOW);
-    delayMicroseconds(tone);
+   delayMicroseconds(tone);
   }
 }
 
 void playNote(char note, int duration) {
   char names[] = { 'c', 'd', 'e', 'f', 'g', 'a', 'b', 'C' };
-  int tones[] = { 1915, 1700, 1519, 1432, 1275, 1136, 1014, 956 };
+  int tones[] = { 915, 1700, 1519, 432, 1275, 1136, 1014, 956 };
   
   // play the tone corresponding to the note name
   for (int i = 0; i < 8; i++) {
@@ -67,19 +67,29 @@ void loop(){
   bendLast[1] = bendLast[2];
   bendLast[2] = bendLevel;
   
-  if (lightLast[0] < 300 && lightLast[1] < 300 && lightLast[2] < 300 && !lightOn ){
+  if (lightLast[0] < 1000 && lightLast[1] < 1000 && lightLast[2] < 1000 && !lightOn ){
     Serial.println("Light ON");
     lightOn = true;
   }
   
-  if (bendLast[0] < 220 && bendLast[1] < 220 && bendLast[2] < 220 && !bendOn ){
+  if (bendLast[0] < 720 && bendLast[1] < 720 && bendLast[2] < 720 && !bendOn ){
     Serial.println("Bend ON");
     bendOn = true;
   }
   
-  if ((lightOn || bendOn) && !playedAlready){
+  if (bendLast[0] > 740 && bendLast[1] > 740 && bendLast[2] > 740 && bendOn ){
+    Serial.println("Bend OFF");
+    bendOn = false;
+  }
+  
+  if (lightLast[0] > 1000 && lightLast[1] > 1000 && lightLast[2] > 1000 && lightOn ){
+    Serial.println("Light OFF");
+    lightOn = false;
+  }
+  
+  
+  if (lightOn || bendOn){
     play();
-    playedAlready = true;
   }
 
   delay(500);
